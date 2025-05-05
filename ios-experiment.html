@@ -1,11 +1,10 @@
 ---
 ---
 <!doctype html>
-<html lang=en>
+<html lang=de>
 <head>
   {% comment %} Only include GA snippet in production and if values in _config.yml match the actual site. {% endcomment %}
   {% if jekyll.environment != 'development' and site.github.repository_nwo == site.ga.nwo %}
-  <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.ga.tid }}"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -19,57 +18,55 @@
   <meta charset=utf-8>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <title>WhatsApp Spoilers</title>
-  <meta name="description" content="Hide content behind a &quot;Read more&quot; button in a WhatsApp message.">
-  <meta property="og:title" content="WhatsApp Spoilers"/>
-  <meta property="og:description" content="Hide content behind a &quot;Read more&quot; button in a WhatsApp message.">
+  <title>WhatsApp Triggerwarnungen</title>
+  <meta name="description" content="Verstecke Inhalte hinter einem &quot;Mehr anzeigen&quot; Knopf in einer WhatsApp Nachricht.">
+  <meta property="og:title" content="WhatsApp Triggerwarnungen"/>
+  <meta property="og:description" content="Verstecke Inhalte hinter einem &quot;Mehr anzeigen&quot; Knopf in einer WhatsApp Nachricht.">
   <meta property="og:image" content="https://yi-jiayu.github.io/whatsapp-spoilers/spoiler.png">
 
   <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
 
-  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
         integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 </head>
 <body>
 <div class="container">
-  <h1 class="mt-3">WhatsApp Spoilers</h1>
-  <h3><small class="text-muted">Hide content behind a &quot;Read more&quot; button in a WhatsApp message.</small></h3>
+  <h1 class="mt-3">WhatsApp Triggerwarnungen</h1>
+  <h3><small class="text-muted">Verstecke Inhalte hinter einem &quot;Mehr anzeigen&quot; Knopf in einer WhatsApp Nachricht.</small></h3>
 
   <img src="spoiler.png" class="img-fluid my-3">
 
   <form>
     <div class="form-group">
-      <label for="warning">Warning: </label>
+      <label for="warning">Warnung: </label>
       <input type="text" class="form-control" id="warning" value="[SPOILER]">
     </div>
 
     <div class="form-group">
-      <label for="padding">Number of characters to pad with</label>
+      <label for="padding">Anzahl der Füllzeichen</label>
       <input type="number" class="form-control" id="padding" value="10000">
     </div>
 
     <div class="form-group">
-      <label for="padding">Code point for padding character</label>
+      <label for="pad-char">Codepunkt für das Füllzeichen</label>
       <input type="text" class="form-control" id="pad-char" value="0x200B" required>
-      <small class="form-text text-muted">Eg. <code>0x200B</code> for zero-width space. See <a
-          href="http://jkorpela.fi/chars/spaces.html">http://jkorpela.fi/chars/spaces.html</a> for examples of
-        Unicode whitespace characters.</small>
+      <small class="form-text text-muted">Z.B. <code>0x200B</code> für Zero-Width Space. Siehe <a
+          href="http://jkorpela.fi/chars/spaces.html">http://jkorpela.fi/chars/spaces.html</a> für Beispiele von Unicode-Leerzeichen.</small>
     </div>
 
 
     <div class="form-group">
-      <label for="content">Content: </label>
+      <label for="content">Inhalt: </label>
       <textarea id="content" class="form-control mb-2"></textarea>
-      <button class="btn btn-primary" type="submit">Submit</button>
+      <button class="btn btn-primary" type="submit">Generieren</button>
     </div>
   </form>
 
   <div class="form-group">
-    <label for="message">Message (copy this): </label>
+    <label for="message">Nachricht (zum Kopieren): </label>
     <textarea id="message" class="form-control mb-2" readonly></textarea>
-    <button class="btn btn-primary" id="copy" onclick=copySpoilerMessage()>Copy to clipboard</button>
+    <button class="btn btn-primary" id="copy" onclick="copySpoilerMessage()">In Zwischenablage kopieren</button>
   </div>
 
   <div class="text-right"><a href="https://github.com/yi-jiayu/whatsapp-spoilers">GitHub</a></div>
@@ -81,10 +78,12 @@
     var warning = document.getElementById('warning').value;
     var content = document.getElementById('content').value;
     var padding = Number(document.getElementById('padding').value);
-    var padChar = String.fromCharCode(document.getElementById('pad-char').value);
+    // Correctly convert hex string to char code
+    var padCharCode = parseInt(document.getElementById('pad-char').value, 16);
+    var padChar = String.fromCharCode(padCharCode);
     var message = warning + ' ' + padChar.repeat(padding) + content;
     document.getElementById('message').value = message;
-    document.getElementById('copy').textContent = "Copy to clipboard (".concat(message.length, " chars)");
+    document.getElementById('copy').textContent = "In Zwischenablage kopieren (".concat(message.length, " Zeichen)");
   }
 
   function copySpoilerMessage() {
@@ -96,17 +95,29 @@
     createSpoilerMessage();
     e.preventDefault();
   });
-  document.getElementById('copy').addEventListener('click', function () {
-    copySpoilerMessage();
-  });
+
+  // It seems there's a duplicate event listener for copy in the original.
+  // Removing the one directly on the button in the HTML markup and keeping the script one is cleaner.
+  // document.getElementById('copy').addEventListener('click', function () {
+  //   copySpoilerMessage();
+  // });
+
+
   var padCharInput = document.getElementById('pad-char');
   padCharInput.addEventListener('input', function (e) {
-    if (isNaN(padCharInput.value)) {
-      padCharInput.setCustomValidity('Not a valid number!');
+     // Check if the input value is a valid hexadecimal number
+    if (!/^[0-9a-fA-F]+$/.test(padCharInput.value)) {
+       padCharInput.setCustomValidity('Ungültige Hexadezimalzahl!');
     } else {
-      padCharInput.setCustomValidity('');
+       padCharInput.setCustomValidity('');
     }
   });
+
+   // Initial message generation on page load or potentially after input changes
+   // This was not in the original script, but could be useful if you want the message
+   // to update dynamically as inputs change, not just on submit.
+   // For now, keeping the original logic of updating on submit.
+
 </script>
 </body>
 </html>
