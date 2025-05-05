@@ -56,7 +56,7 @@
 
   <div class="form-group">
     <label for="warning">Warnung: </label>
-    <input type="text" class="form-control" id="warning" value="[SPOILER]">
+    <input type="text" class="form-control" id="warning" value="[TRIGGERWARNUNG: THEMA]">
   </div>
 
   <div class="form-group">
@@ -72,14 +72,14 @@
 
   <div class="custom-control custom-checkbox">
     <input type="checkbox" class="custom-control-input" id="iosCompatibilityCheck">
-    <label class="custom-control-label" for="iosCompatibilityCheck">iOS Kompatibilitätsmodus</label>
+    <label class="custom-control-label" for="iosCompatibilityCheck">iOS (iPhone) Kompatibilitätsmodus</label>
     <small id="iosCompatibilityCheckHelp" class="form-text text-muted">Wenn der iOS Kompatibilitätsmodus aktiviert ist, werden normale Leerzeichen anstelle von Zero-Width Spaces verwendet.</small>
   </div>
 
   <div class="form-group">
-    <label for="content">Inhalt: (Schreib deinen Text hier rein) </label>
+    <label for="content">Inhalt: (Schreib oder füge deinen Text hier rein!) </label>
     <textarea id="content" class="form-control mb-2"></textarea>
-    <button class="btn btn-primary" onclick="createSpoilerMessage()">Generieren</button>
+    <button class="btn btn-primary" onclick="createSpoilerMessage()">Generieren Text mit Inhaltswarnung</button>
   </div>
 
   <div class="form-group">
